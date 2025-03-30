@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+resource_name = "button"
+script/source = "extends Button
+
+var ui = null
+var menu = null
+
+func on_pressed():
+	ui.get_parent().set_menu(menu)
+"
+
+[node name="Button" type="Button"]
+margin_right = 272.0
+margin_bottom = 25.0
+text = "Mods"
+script = SubResource( 1 )
+
+[connection signal="pressed" from="." to="." method="on_pressed"]

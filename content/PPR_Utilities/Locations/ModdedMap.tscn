@@ -1,0 +1,237 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://default_panel_pressed.tres" type="StyleBox" id=1]
+[ext_resource path="res://default_theme.tres" type="Theme" id=2]
+[ext_resource path="res://PPR_Utilities/Locations/ModdedMap.gd" type="Script" id=3]
+
+[node name="Modded Map" type="HBoxContainer"]
+margin_left = 224.0
+margin_right = 1022.0
+margin_bottom = 676.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.61
+theme = ExtResource( 2 )
+script = ExtResource( 3 )
+
+[node name="VBoxContainer4" type="VBoxContainer" parent="."]
+margin_right = 164.0
+margin_bottom = 676.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PanelContainer4" type="PanelContainer" parent="VBoxContainer4"]
+margin_right = 164.0
+margin_bottom = 676.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Location_List" type="ItemList" parent="VBoxContainer4/PanelContainer4"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 160.0
+margin_bottom = 672.0
+allow_reselect = true
+
+[node name="VBoxContainer5" type="VBoxContainer" parent="."]
+margin_left = 168.0
+margin_right = 333.0
+margin_bottom = 676.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PanelContainer4" type="PanelContainer" parent="VBoxContainer5"]
+margin_right = 165.0
+margin_bottom = 676.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Spawn_List" type="ItemList" parent="VBoxContainer5/PanelContainer4"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 161.0
+margin_bottom = 672.0
+allow_reselect = true
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="."]
+show_behind_parent = true
+margin_left = 337.0
+margin_right = 798.0
+margin_bottom = 676.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.79
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer3"]
+show_behind_parent = true
+margin_right = 461.0
+margin_bottom = 382.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.51
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer3/HBoxContainer"]
+self_modulate = Color( 1, 1, 1, 0 )
+show_behind_parent = true
+margin_right = 461.0
+margin_bottom = 382.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PanelContainer" type="TextureRect" parent="VBoxContainer3/HBoxContainer/PanelContainer"]
+modulate = Color( 1, 0, 0, 1 )
+show_behind_parent = true
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 457.0
+margin_bottom = 378.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.45
+expand = true
+stretch_mode = 5
+
+[node name="Label" type="RichTextLabel" parent="VBoxContainer3/HBoxContainer/PanelContainer/PanelContainer"]
+visible = false
+margin_right = 341.0
+margin_bottom = 175.0
+
+[node name="PanelContainer4" type="PanelContainer" parent="VBoxContainer3"]
+visible = false
+margin_top = 177.0
+margin_right = 467.0
+margin_bottom = 284.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer3/PanelContainer4"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 463.0
+margin_bottom = 103.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer3/PanelContainer4/VBoxContainer"]
+margin_right = 459.0
+margin_bottom = 27.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Multiplier" type="Label" parent="VBoxContainer3/PanelContainer4/VBoxContainer/HBoxContainer3"]
+margin_right = 338.0
+margin_bottom = 27.0
+text = "Manipulation Multiplier:  "
+
+[node name="Multiplier2" type="Label" parent="VBoxContainer3/PanelContainer4/VBoxContainer/HBoxContainer3"]
+margin_left = 342.0
+margin_right = 394.0
+margin_bottom = 27.0
+text = "2.00"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer3/PanelContainer4/VBoxContainer"]
+margin_top = 31.0
+margin_right = 459.0
+margin_bottom = 68.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Lives" type="Label" parent="VBoxContainer3/PanelContainer4/VBoxContainer/HBoxContainer2"]
+margin_top = 5.0
+margin_right = 273.0
+margin_bottom = 32.0
+text = "Orgonergic Constructs"
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer3/PanelContainer4/VBoxContainer/HBoxContainer2"]
+margin_left = 277.0
+margin_right = 459.0
+margin_bottom = 37.0
+min_value = 1.0
+max_value = 3.0
+value = 1.0
+align = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer3/PanelContainer4/VBoxContainer"]
+margin_top = 72.0
+margin_right = 459.0
+margin_bottom = 99.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="VBoxContainer3/PanelContainer4/VBoxContainer/HBoxContainer"]
+margin_right = 221.0
+margin_bottom = 27.0
+text = "Psycholink Speed "
+
+[node name="HSlider" type="HSlider" parent="VBoxContainer3/PanelContainer4/VBoxContainer/HBoxContainer"]
+margin_left = 225.0
+margin_right = 416.0
+margin_bottom = 27.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+min_value = 0.5
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="Label2" type="Label" parent="VBoxContainer3/PanelContainer4/VBoxContainer/HBoxContainer"]
+margin_left = 420.0
+margin_right = 459.0
+margin_bottom = 27.0
+text = "1.0"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer3"]
+margin_top = 386.0
+margin_right = 461.0
+margin_bottom = 419.0
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer3/HBoxContainer2"]
+margin_right = 80.0
+margin_bottom = 33.0
+
+[node name="Button" type="Button" parent="VBoxContainer3/HBoxContainer2/PanelContainer"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 76.0
+margin_bottom = 29.0
+text = "Scramble"
+
+[node name="PanelContainer2" type="PanelContainer" parent="VBoxContainer3/HBoxContainer2"]
+margin_left = 84.0
+margin_right = 461.0
+margin_bottom = 33.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TextureProgress" type="ProgressBar" parent="VBoxContainer3/HBoxContainer2/PanelContainer2"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 373.0
+margin_bottom = 29.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PanelContainer3" type="PanelContainer" parent="VBoxContainer3"]
+margin_top = 423.0
+margin_right = 461.0
+margin_bottom = 676.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_styles/panel = ExtResource( 1 )
+
+[node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer3/PanelContainer3"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 457.0
+margin_bottom = 249.0
+
+[connection signal="visibility_changed" from="." to="." method="_on_Map_visibility_changed"]
+[connection signal="item_selected" from="VBoxContainer4/PanelContainer4/Location_List" to="." method="_on_Location_List_item_selected"]
+[connection signal="item_selected" from="VBoxContainer5/PanelContainer4/Spawn_List" to="." method="_on_Spawn_List_item_selected"]
+[connection signal="value_changed" from="VBoxContainer3/PanelContainer4/VBoxContainer/HBoxContainer2/SpinBox" to="." method="_on_Lives_value_changed"]
+[connection signal="value_changed" from="VBoxContainer3/PanelContainer4/VBoxContainer/HBoxContainer/HSlider" to="." method="_on_PsychoLink_value_changed"]
+[connection signal="pressed" from="VBoxContainer3/HBoxContainer2/PanelContainer/Button" to="." method="_on_Button_pressed"]

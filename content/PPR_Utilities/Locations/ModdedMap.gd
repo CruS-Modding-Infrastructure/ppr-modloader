@@ -10,7 +10,7 @@ func _ready():
 	connect("visibility_changed", self, "vis_changed")
 	var i = 0
 	for l in Dataset.locations:
-		if l.has_meta("modded"):
+		if l.has_meta("modded") and not l.has_meta("deleted"):
 			if not l.spawn_points.empty() or Global.debug:
 				loc_list.add_item(l.id)
 				loc_list.set_item_metadata(i, l)
@@ -28,7 +28,7 @@ func update_locations():
 	var l_i = 0
 	
 	for l in Dataset.locations:
-		if l.has_meta("modded"):
+		if l.has_meta("modded") and not l.has_meta("deleted"):
 			if not l.spawn_points.empty() or Global.debug:
 				loc_list.add_item(l.id)
 				
@@ -63,7 +63,7 @@ func _on_Location_List_item_selected(index):
 		var s_i = 0
 		var i = 0
 		
-		if l.has_meta("modded"):
+		if l.has_meta("modded") and not l.has_meta("deleted"):
 			if l.icon != null:
 				$VBoxContainer3/HBoxContainer/PanelContainer/PanelContainer.texture = l.icon
 				$VBoxContainer3/HBoxContainer/PanelContainer/PanelContainer.modulate = l.icon_color

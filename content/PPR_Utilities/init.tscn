@@ -12,3 +12,9 @@ script = ExtResource( 2 )
 
 [node name="Locations" type="Node" parent="."]
 script = ExtResource( 3 )
+
+[node name="CheckTimer" type="Timer" parent="Locations"]
+wait_time = 0.1
+autostart = true
+
+[connection signal="timeout" from="Locations/CheckTimer" to="Locations" method="on_ready_locations_check"]

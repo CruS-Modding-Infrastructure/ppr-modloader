@@ -19,10 +19,11 @@ func _ready():
 	
 	_on_Location_List_item_selected(0)
 	
-	if get_node_or_null("../ModdedMap") == null:
-		var new_modded_map = modded_map.instance()
-		get_parent().call_deferred("add_child", new_modded_map)
-		get_parent().call_deferred("move_child", new_modded_map, 1)
+	if get_node("../..").name == "WindowDialog":
+		if get_node_or_null("../ModdedMap") == null:
+			var new_modded_map = modded_map.instance()
+			get_parent().call_deferred("add_child", new_modded_map)
+			get_parent().call_deferred("move_child", new_modded_map, 1)
 
 func vis_changed():
 	update_locations()

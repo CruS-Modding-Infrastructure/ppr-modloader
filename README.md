@@ -3,29 +3,32 @@
 ## Installing the loader
 
 1. Download the [latest release](https://github.com/CruS-Modding-Infrastructure/ppr-modloader/releases)
-2. Extract the contents of the zip into your Psycho Patrol R game folder. You can access this folder from Steam by right clicking the game in your library, then clicking Manage > Browse local files
-3. Run `_install_modloader.bat`
+2. Extract the contents of the zip into your Psycho Patrol R installation folder  
+You can access this folder from Steam by right-clicking the game in your library, then clicking Manage > Browse local files  
+It is usually found at this path: `C:/Program Files (x86)/Steam/steamapps/common/Psycho Patrol R`
+3. Run `_install_modloader.ps1`
 4. Start the game
 
 ## Uninstalling the loader
 
-1. Right-click the game in steam
-2. Go to Properties > Local Files
-3. Verify integrity of game files
+1. Delete the `override_ppr-modloader.cfg` file in the game's installation folder
 
 ## Installing mods
 
-1. Drag mod archive into mods folder
-2. Launch the game
+1. Place mod zip file into the `mods` folder  
+(The mod zip file's name looks something like: `ExampleAuthor-ExampleModName-1.2.3.zip`)
+3. Launch the game
 
 ## Uninstalling mods
 
-1. Remove the mod from mods folder
+1. Remove the mod zip file from the `mods` folder
+
+## How to make mods
+
+[Read the Godot Mod Loader wiki](https://github.com/GodotModding/godot-mod-loader/blob/main/README.md#getting-started)
 
 ## Credits
 
 Made for [Psycho Patrol R](https://store.steampowered.com/app/1907590/Psycho_Patrol_R/)
-
-Uses [GodotPckTool](https://github.com/hhyyrylainen/GodotPckTool) to install
 
 Based on [Godot Mod Loader](https://github.com/GodotModding/godot-mod-loader)

@@ -7,10 +7,10 @@ MODLOADERDIR="$(find . -maxdepth 1 -type d -name 'ppr-modloader*' | sort -V | ta
 
 if [ -d "$MODLOADERDIR" ]
 then
-	printf "\u001b[95m[PPR-ModLoader Installer] \u001b[0m"
+	printf "\u001b[95m[PPR-ModLoader Installer]\u001b[0m "
 	echo "Using ppr-modloader folder at: $MODLOADERDIR"
 else
-	printf "\u001b[91m[PPR-ModLoader Installer] \u001b[0m"
+	printf "\u001b[91m[PPR-ModLoader Installer]\u001b[0m "
 	echo "The ppr-modloader folder is missing!"
 	echo "Please make sure to follow the install instructions correctly!"
 
@@ -46,7 +46,7 @@ do
 	then
 		realdir="$(realpath "$dir")"
 
-		printf "\u001b[95m[PPR-ModLoader Installer] \u001b[0m"
+		printf "\u001b[95m[PPR-ModLoader Installer]\u001b[0m "
 		echo "Successfully found game in: $realdir"
 
 		break
@@ -55,7 +55,7 @@ done
 
 if [ -z "$EXECPATH" ]
 then
-	printf "\u001b[91m[PPR-ModLoader Installer] \u001b[0m"
+	printf "\u001b[91m[PPR-ModLoader Installer]\u001b[0m "
 	echo "Failed to find the game folder!"
 	echo "Please make sure to follow the install instructions correctly!"
 

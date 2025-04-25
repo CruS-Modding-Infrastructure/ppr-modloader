@@ -8,7 +8,7 @@ const CFG_PATH: = "res://override_ppr-modloader.cfg"
 const NEW_CONFIG: = {
 	"debug": {
 		"settings/stdout/print_fps": false, # stop spamming fps into console
-		"gdscript/warnings/enable.release": false, # not sure why we'd want this
+		"gdscript/warnings/enable.release": false,
 	},
 }
 
@@ -494,7 +494,6 @@ func pprml_recursive_copy(from_path: String, into_path: String) -> void:
 func pprml_print_step(msg: String, error:=false) -> void:
 	print(
 		"\u001b[91m" if error else "\u001b[95m",
-		"[PPR-ModLoader Installer] ",
-		"\u001b[0m",
+		"[PPR-ModLoader Installer]\u001b[0m ",
 		msg
 	)

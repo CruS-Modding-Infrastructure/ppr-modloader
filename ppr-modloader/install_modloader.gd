@@ -3,7 +3,7 @@ extends MainLoop
 const MODLOADER_VERSION: = "ppr-modloader-0.3"
 
 # we put the modloader's overrides here so we don't mess with the user's overrides
-const CFG_PATH: = "user://override_ppr-modloader.cfg"
+const CFG_PATH: = "res://override_ppr-modloader.cfg"
 
 const NEW_CONFIG: = {
 	"debug": {

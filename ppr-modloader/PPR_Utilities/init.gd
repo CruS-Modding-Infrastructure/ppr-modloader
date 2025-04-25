@@ -8,6 +8,7 @@ const SCRIPT_EXTS: = {
 	"res://Scripts/Map.gd": "res://PPR_Utilities/Locations/Map.gd",
 }
 
+# store references to scripts here so they wont be unloaded from memory
 var _scripts: = []
 
 func _init() -> void:
@@ -21,6 +22,8 @@ func _init() -> void:
 			script_orig.take_over_path(
 				path_new.get_base_dir().plus_file("_orig_" + path_new.get_file())
 			)
+
+			_scripts.append(script_orig)
 
 		var script_new: Script = load(path_new)
 

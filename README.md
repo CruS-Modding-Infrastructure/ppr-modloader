@@ -6,7 +6,7 @@
 2. Extract the contents of the zip into your Psycho Patrol R installation folder  
 You can access this folder from Steam by right-clicking the game in your library, then clicking Manage > Browse local files  
 It is usually found at this path: `C:/Program Files (x86)/Steam/steamapps/common/Psycho Patrol R`
-3. Run `_install_modloader.ps1`
+3. Run `_install_modloader.bat`
 4. Start the game
 
 ## Uninstalling the loader

@@ -1,4 +1,4 @@
-extends "res://PPR_Utilities/MainMenu/_orig_Info_Panel.gd"
+extends "_orig_Info_Panel.gd"
 
 func _ready():
 	PPRUtilities.main_menu.set_menu_on_ready($UI/Menu_Select/VBoxContainer2, $UI)

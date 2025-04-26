@@ -4,11 +4,11 @@ $local:ErrorActionPreference = [System.Management.Automation.ActionPreference]::
 $EXECNAME = "psychopatrolr"
 
 # find folder with latest version string
-$MODLOADERDIR = Get-ChildItem -Directory -Path . -Filter "ppr-modloader-*" |
-	Where-Object { $_.Name -match '^ppr-modloader-(?<version>\d+(\.\d+)+)$' } |
+$MODLOADERDIR = Get-ChildItem -Directory -Path . -Filter "ppr-modloader-v*" |
+	Where-Object { $_.Name -match '^ppr-modloader-v(?<version>\d+(\.\d+)+).*$' } |
 	Sort-Object -Property @{
 		Expression = {
-			$versionPart = $_.Name -replace '^ppr-modloader-',''
+			$versionPart = $_.Name -replace '^ppr-modloader-v',''
 			[System.Version]::new("$versionPart")
 		}
 	} |

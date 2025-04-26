@@ -1,6 +1,6 @@
 extends MainLoop
 
-const MODLOADER_VERSION: = "ppr-modloader-0.3"
+const MODLOADER_VERSION: = "ppr-modloader-v0.3"
 
 # we put the modloader's overrides here so we don't mess with the user's overrides
 const CFG_PATH: = "res://override_ppr-modloader.cfg"
@@ -216,7 +216,7 @@ func pprml_handle_override() -> void:
 	# we should probably eventually remove this check in the future
 	if File.new().get_md5("override.cfg") == "d46e58d08665d877f065f7b1e1226b69":
 		pprml_print_step(
-			"Found outdated override.cfg from versions ppr-modloader-0.2 or older"
+			"Found outdated override.cfg from versions ppr-modloader-v0.2 or older"
 		)
 	else:
 		# load the user's overrides

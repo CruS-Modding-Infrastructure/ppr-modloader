@@ -400,7 +400,7 @@ func pprml_handle_folders() -> void:
 
 	if basedir.begins_with("res://"):
 		basedir = workingdir.plus_file(basedir.trim_prefix("res://"))
-	elif basedir.is_rel_path():
+	elif basedir.begins_with("user://"):
 		basedir = ProjectSettings.globalize_path(basedir)
 
 	# copy these folders into the working dir

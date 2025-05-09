@@ -59,7 +59,7 @@ https://wiki.godotmodding.com
 To learn about Godot itself, please use the official Godot Docs:  
 https://docs.godotengine.org/en/3.5/
 
-IMPORTANT: Psycho Patrol R currently uses Godot v3.5.2, so make sure you're following instructions for Godot 3 and not Godot 4
+IMPORTANT: Psycho Patrol R currently uses Godot v3.5.2, so make sure you're using documentation/guides/tutorials for Godot 3 and not Godot 4
 
 ## Credits
 

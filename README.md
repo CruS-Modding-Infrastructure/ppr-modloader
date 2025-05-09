@@ -30,10 +30,10 @@ It is usually found at this path: `C:/Program Files (x86)/Steam/steamapps/common
 #### PPR-specific instructions for setting up a decompiled Godot project for modding:
 
 Requirements:
-1. [Godot v3.5.2](https://godotengine.org/download/archive/3.5.2-stable/)
-2. [Godot RE Tools](https://github.com/GDRETools/gdsdecomp/releases)
-3. [Psycho Patrol R Mod Loader](https://github.com/GDRETools/gdsdecomp/releases)
-4. [TrenchBroom v2023.1](https://github.com/TrenchBroom/TrenchBroom/releases/tag/v2023.1) (if you're planning on making custom levels)
+- [Godot v3.5.2](https://godotengine.org/download/archive/3.5.2-stable/)
+- [Godot RE Tools](https://github.com/GDRETools/gdsdecomp/releases)
+- [Psycho Patrol R Mod Loader](https://github.com/GDRETools/gdsdecomp/releases)
+- [TrenchBroom v2023.1](https://github.com/TrenchBroom/TrenchBroom/releases/tag/v2023.1) (if you're planning on making custom levels)
 
 Instructions:
 1. Decompile the game's `psychopatrolr.pck` file using Godot RE Tools ([specific instructions here](https://wiki.godotmodding.com/guides/modding/tools/decompile_games/))

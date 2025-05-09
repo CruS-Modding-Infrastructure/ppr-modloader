@@ -32,7 +32,7 @@ It is usually found at this path: `C:/Program Files (x86)/Steam/steamapps/common
 Requirements:
 - [Godot v3.5.2](https://godotengine.org/download/archive/3.5.2-stable/)
 - [Godot RE Tools](https://github.com/GDRETools/gdsdecomp/releases)
-- [Psycho Patrol R Mod Loader](https://github.com/GDRETools/gdsdecomp/releases)
+- [Psycho Patrol R Mod Loader](https://github.com/CruS-Modding-Infrastructure/ppr-modloader/releases)
 - [TrenchBroom v2023.1](https://github.com/TrenchBroom/TrenchBroom/releases/tag/v2023.1) (if you're planning on making custom levels)
 
 Instructions:

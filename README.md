@@ -23,9 +23,43 @@ It is usually found at this path: `C:/Program Files (x86)/Steam/steamapps/common
 
 1. Remove the mod zip file from the `mods` folder
 
-## How to make mods
+## How to create mods
 
-[Read the Godot Mod Loader wiki](https://github.com/GodotModding/godot-mod-loader/blob/main/README.md#getting-started)
+*Note: The following instructions are for mod developers only! If you just want to install mods, then you don't need to do anything below here!*
+
+#### PPR-specific instructions for setting up a decompiled Godot project for modding:
+
+Requirements:
+1. [Godot v3.5.2](https://godotengine.org/download/archive/3.5.2-stable/)
+2. [Godot RE Tools](https://github.com/GDRETools/gdsdecomp/releases)
+3. [Psycho Patrol R Mod Loader](https://github.com/GDRETools/gdsdecomp/releases)
+4. [TrenchBroom v2023.1](https://github.com/TrenchBroom/TrenchBroom/releases/tag/v2023.1) (if you're planning on making custom levels)
+
+Instructions:
+1. Decompile the game's `psychopatrolr.pck` file using Godot RE Tools ([specific instructions here](https://wiki.godotmodding.com/guides/modding/tools/decompile_games/))
+2. You should now have a decompiled Godot project for Psycho Patrol R, you should move its folder to somewhere that's easy to find later
+3. Copy the `addons` folder and `PPR_Utilities` folder from the Psycho Patrol R Mod Loader into the decompiled project
+4. Open the `project.godot` file with a text editor
+5. Find the `[autoload]` line and paste these lines directly below it:
+```ini
+PPRUtilities="*res://PPR_Utilities/init.tscn"
+ModLoaderStore="*res://addons/mod_loader/mod_loader_store.gd"
+ModLoader="*res://addons/mod_loader/mod_loader.gd"
+```
+6. Save and close the `project.godot` file
+7. Run the Godot v3.5.2 editor
+8. Click the "Import" button and find the decompiled project's folder
+9. "Psycho Patrol R" should now be added to the project list and you can open the project in the Godot editor from here
+
+To update your project when PPR receives a new patch, you will have to repeat these instructions. Though make sure to backup your `mods-unpacked` folder beforehand and then move it into the new updated project afterwards.
+
+To learn about modding a Godot game, please read through the Godot Mod Loader wiki:  
+https://wiki.godotmodding.com
+
+To learn about Godot itself, please use the official Godot Docs:  
+https://docs.godotengine.org/en/3.5/
+
+IMPORTANT: Psycho Patrol R currently uses Godot v3.5.2, so make sure you're following instructions for Godot 3 and not Godot 4
 
 ## Credits
 

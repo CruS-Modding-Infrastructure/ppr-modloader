@@ -30,7 +30,7 @@ It is usually found at this path: `C:/Program Files (x86)/Steam/steamapps/common
 #### PPR-specific instructions for setting up a decompiled Godot project for modding:
 
 Requirements:
-- [Godot v3.5.2](https://godotengine.org/download/archive/3.5.2-stable/)
+- [Godot v3.6](https://godotengine.org/download/archive/3.6-stable/)
 - [Godot RE Tools](https://github.com/GDRETools/gdsdecomp/releases)
 - [Psycho Patrol R Mod Loader](https://github.com/CruS-Modding-Infrastructure/ppr-modloader/releases)
 - [TrenchBroom v2023.1](https://github.com/TrenchBroom/TrenchBroom/releases/tag/v2023.1) (if you're planning on making custom levels)
@@ -47,7 +47,7 @@ ModLoaderStore="*res://addons/mod_loader/mod_loader_store.gd"
 ModLoader="*res://addons/mod_loader/mod_loader.gd"
 ```
 6. Save and close the `project.godot` file
-7. Run the Godot v3.5.2 editor
+7. Run the Godot v3.6 editor
 8. Click the "Import" button and find the decompiled project's folder
 9. "Psycho Patrol R" should now be added to the project list and you can open the project in the Godot editor from here
 
@@ -57,9 +57,9 @@ To learn about modding a Godot game, please read through the Godot Mod Loader wi
 https://wiki.godotmodding.com
 
 To learn about Godot itself, please use the official Godot Docs:  
-https://docs.godotengine.org/en/3.5/
+https://docs.godotengine.org/en/3.6/
 
-IMPORTANT: Psycho Patrol R currently uses Godot v3.5.2, so make sure you're using documentation/guides/tutorials for Godot 3 and not Godot 4
+IMPORTANT: Psycho Patrol R currently uses Godot v3.6, so make sure you're using documentation/guides/tutorials for Godot 3 and not Godot 4
 
 ## Credits
 

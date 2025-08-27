@@ -6,6 +6,7 @@ onready var locations = $Locations
 const SCRIPT_EXTS: = {
 	"res://Scripts/Info_Panel.gd": "res://PPR_Utilities/MainMenu/Info_Panel.gd",
 	"res://Scripts/Map.gd": "res://PPR_Utilities/Locations/Map.gd",
+	"res://Scripts/Data.gd": "res://PPR_Utilities/QuestLoader/QuestLoader.gd"
 }
 
 # store references to scripts here so they wont be unloaded from memory

@@ -17,6 +17,8 @@ func _ready():
 				i += 1
 	loc_list.select(0)
 	
+	PPRUtilities.locations.spawn_objects()
+	
 	_on_Location_List_item_selected(0)
 
 func vis_changed():

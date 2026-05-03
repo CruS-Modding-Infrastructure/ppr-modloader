@@ -74,6 +74,9 @@ func create_placeholder_location(recived_location_id):
 	
 	Dataset.locations.append(placeholder_location)
 
+func new_location():
+	return location.new()
+
 func add_location(recived_location):
 	recived_location.set_meta("modded", true)
 	
@@ -81,3 +84,21 @@ func add_location(recived_location):
 		Dataset.locations.erase(Dataset.get_by_id(Dataset.locations, recived_location.id))
 
 	Dataset.locations.append(recived_location)
+
+var objects = {}
+
+func add_object(recived_location_id, recived_path, recived_position, recived_rotation):
+	if not recived_location_id in objects:
+		objects[recived_location_id] = []
+	
+	objects[recived_location_id].append([recived_path, recived_position, recived_rotation])
+
+func spawn_objects():
+	if Dataset.current_location.id != null and Dataset.current_location.id in objects:
+		for i in objects[Dataset.current_location.id]:
+			var new_object = load(i[0]).instance()
+			
+			Global.player.get_parent().add_child(new_object)
+			
+			new_object.global_position = i[1]
+			new_object.rotation_degrees = i[2]

@@ -1,7 +1,7 @@
 extends Node
 
 class ammo:
-	var id: String = "20mm"
+	var id: String = "Pure void"
 	var bullet_node = preload("res://Bullets/Bullet3D.tscn")
 	var casing_node = preload("res://Gibs/Shell.tscn")
 	var max_amount = 9999

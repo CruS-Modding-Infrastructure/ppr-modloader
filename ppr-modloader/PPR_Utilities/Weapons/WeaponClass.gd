@@ -241,7 +241,7 @@ class weapon:
 	#custom_fire - use custom fire function
 	#custom_reload - use custom reload function
 	#custom_mesh - hides original meshes
-	#hide_status_label - FALSE hide status label
+	#hide_status_label - hide status label
 	
 	func has_flag(recived_flag):
 		return custom_weapon_flags.has(recived_flag)
@@ -249,5 +249,10 @@ class weapon:
 	func set_flags(recived_flags: Array):
 		custom_weapon_flags = recived_flags
 	
+	var ammo_type_fix
+	
 	func set_ammo_type(recived_type):
-		ammo_type = Dataset.get_by_id(Dataset.ammo_types, recived_type)
+		ammo_type_fix = recived_type
+	
+	func fix_ammo_type():
+		ammo_type = Dataset.get_by_id(Dataset.ammo_types, ammo_type_fix)

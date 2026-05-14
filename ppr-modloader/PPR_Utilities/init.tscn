@@ -33,4 +33,10 @@ script = ExtResource( 5 )
 [node name="AmmoClass" type="Node" parent="Weapons"]
 script = ExtResource( 6 )
 
+[node name="FixAmmoType" type="Timer" parent="Weapons"]
+wait_time = 0.1
+one_shot = true
+autostart = true
+
 [connection signal="timeout" from="Locations/CheckTimer" to="Locations" method="on_ready_locations_check"]
+[connection signal="timeout" from="Weapons/FixAmmoType" to="Weapons" method="fix_ammo"]

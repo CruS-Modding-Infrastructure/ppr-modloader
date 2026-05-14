@@ -1,28 +1,6 @@
 extends Node
 
-class location:
-	var id = "Versten Residential"
-	var level = "res://Levels/Locations/Helsinki.tscn"
-	var description = "Funzone."
-	
-	# modded stuff
-	var icon = null
-	var icon_color = Color.white
-	
-	var spawn_points = []
-	var indoors = false
-	var items_picked_up = []
-	var persistent_dead = []
-	
-	func save():
-		var save_data = {
-			"id": id, 
-			"type": "location",
-			"spawn_points": spawn_points, 
-			"persistent_dead": persistent_dead, 
-			"items_picked_up": items_picked_up
-		}
-		return save_data
+onready var location_class = $LocationClass
 
 func on_ready_locations_check():
 	if Dataset.locations.size() != 0:
@@ -63,7 +41,7 @@ func check_locations(recived_save_path):
 	save_game.close()
 
 func create_placeholder_location(recived_location_id):
-	var placeholder_location = location.new()
+	var placeholder_location = location_class.location.new()
 	
 	placeholder_location.id = recived_location_id
 	placeholder_location.description = "Edge of the world"
@@ -75,7 +53,7 @@ func create_placeholder_location(recived_location_id):
 	Dataset.locations.append(placeholder_location)
 
 func new_location():
-	return location.new()
+	return location_class.location.new()
 
 func add_location(recived_location):
 	recived_location.set_meta("modded", true)

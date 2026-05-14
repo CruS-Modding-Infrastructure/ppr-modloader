@@ -8,3 +8,9 @@ func on_reload():
 
 func on_drop():
 	pass
+
+func is_player() -> bool:
+	return get_node("../../../") == Global.player_inf
+
+func is_mech() -> bool:
+	return get_node("../../") == Global.player_ship

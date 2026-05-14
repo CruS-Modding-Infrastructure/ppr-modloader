@@ -9,15 +9,15 @@ onready var locations = $Locations
 onready var weapons = $Weapons
 
 const SCRIPT_EXTS: = {
-	"res://Scripts/Info_Panel.gd": "res://PPR_Utilities/MainMenu/Info_Panel.gd",
-	"res://Scripts/Map.gd": "res://PPR_Utilities/Locations/Map.gd",
-	"res://Scripts/Data.gd": "res://PPR_Utilities/QuestLoader/QuestLoader.gd",
-	"res://Scripts_3D/Weapon.gd": "res://PPR_Utilities/Weapons/Custom_Weapon.gd"
-	#"res://Original_script.gd": "res://Changed_script.gd"
+	"res://Scripts/Info_Panel.gd": "res://PPR_Utilities/Remaps/Info_Panel.gd",
+	"res://Scripts/Map.gd": "res://PPR_Utilities/Remaps/Map.gd",
+	"res://Scripts/Data.gd": "res://PPR_Utilities/Remaps/Data.gd",
+	"res://Scripts_3D/Weapon.gd": "res://PPR_Utilities/Remaps/Weapon.gd",
+	#"res://Original_script.gd": "res://Remaped_script.gd"
 }
 
 const SCENE_EXTS: = {
-	#"res://Original_scene.tscn": "res://Changed_scene.tscn",
+	#"res://Original_scene.tscn": "res://Remaped_scene.tscn",
 }
 
 # store references to scripts and scenes here so they wont be unloaded from memory

@@ -14,6 +14,7 @@ var hit_marker = preload("res://Bullets/hit_market.tscn")
 var rocket = preload("res://Bullets/Bullet_Rocket.tscn")
 var bullet_taser: PackedScene = preload("res://Bullets/BulletTaser.tscn")
 var shell = preload("res://Gibs/Shell.tscn")
+export var level = 1
 onready var body = $Body_Mesh
 onready var barrel = $Body_Mesh / Barrel_Mesh
 onready var shoot_pos = $Position3D
@@ -25,6 +26,8 @@ export (Array, String) var random_weapons = []
 export var ammo_label_offset: float = 0
 export var manual_reload = false
 onready var enemy_root = get_parent().get_parent().get_parent()
+onready var arm_2 = get_node_or_null("Body_Mesh/Arm2")
+onready var arm = get_node_or_null("Body_Mesh/Arm")
 var audio = preload("res://Sound_Emitters/Weapon1.tscn")
 var burst_shots = 0
 var flash_counter = 0.0
@@ -34,6 +37,8 @@ var b_count = 3
 var mag_shots_fired = 0
 var health = 100
 var ammo_setup = true
+onready var energy_ray = $Energy_Ray
+onready var energy_light = $Energy_Ray / OmniLight
 onready var firemode_label = $CanvasLayer / VBoxContainer / Firemode_Label
 onready var ammo_label = $CanvasLayer / VBoxContainer / Ammo_Label
 onready var magazine_label = $CanvasLayer / VBoxContainer / Magazine_Label
@@ -52,9 +57,12 @@ var rot_vel = 0
 var sound_area = preload("res://Noise_Area.tscn")
 var sound_area_node: Area
 var shells: Array = []
+var arm_mesh = null
 export var hide = false
 var max_shell_count = 10
 var current_ammo_type = 0
+
+### Modded
 
 var modded = false
 var is_custom_weapon = false
@@ -86,13 +94,19 @@ func init_custom_weapon():
 	else:
 		is_custom_weapon = false
 
+###
+
 func swap_ammo():
+	print("yay")
 	if weapon_type.sp_ammo_types != null:
 		var ammo_types: Array = weapon_type.sp_ammo_types.duplicate()
 		ammo_types.invert()
+		if level >= 6 and not weapon_type.upgrade_ammo_types.empty():
+			ammo_types.append(weapon_type.upgrade_ammo_types[0])
+		if level >= 11 and weapon_type.upgrade_ammo_types.size() > 1:
+			ammo_types.append(weapon_type.upgrade_ammo_types[1])
 		ammo_types.append(weapon_type.ammo_type)
 		ammo_types.invert()
-		
 		current_ammo_type += 1
 		current_ammo_type = wrapi(current_ammo_type, 0, ammo_types.size())
 		ammo_type = ammo_types[current_ammo_type]
@@ -108,7 +122,6 @@ func set_fire_mode():
 	
 	if weapon_type.fire_modes[fire_mode_index] or weapon_mod.fire_modes[fire_mode_index]:
 		fire_mode = fire_mode_index
-		
 	else:
 		set_fire_mode()
 	match_fire_mode_label()
@@ -127,13 +140,20 @@ func match_fire_mode_label():
 	firemode_label.text += "\n" + ammo_type.id
 
 func _reduce_health(d, v):
+	return
 	health -= d
 	if health <= 0:
 		body.hide()
 		barrel.hide()
 		destroyed = true
 
+func disable_hitbox():
+	$Body_Mesh / KinematicBody.queue_free()
+
 func _ready():
+	arm_mesh = barrel.duplicate()
+	body.add_child(arm_mesh)
+	arm_mesh.mesh = null
 	if weapon_id == "random":
 		randomize()
 		weapon_id = random_weapons[randi() % random_weapons.size()]
@@ -146,7 +166,6 @@ func _ready():
 		$Orgone_Ray.set_collision_mask_bit(3, 0)
 	else:
 		$Orgone_Ray.set_collision_mask_bit(4, 0)
-		$Body_Mesh / KinematicBody.queue_free()
 		set_process_input(false)
 		set_process_unhandled_input(false)
 	if sound_3d:
@@ -173,6 +192,7 @@ func _ready():
 		for w in Dataset.weapons:
 			if w.id == weapon_id:
 				weapon_type = w
+				
 	if not hide:
 		barrel.mesh = weapon_type.barrel_mesh
 		barrel.material_override = weapon_type.material
@@ -185,6 +205,8 @@ func _ready():
 	ammo_type = weapon_type.ammo_type
 	if ammo_type == null:
 		ammo_type = Dataset.ammo_types[0]
+
+	new_audio.stream = weapon_type.sfx
 	armor = weapon_type.weapon_mass
 	if not player:
 		ammo = weapon_type.ammo
@@ -192,10 +214,14 @@ func _ready():
 		set_process_input(false)
 		set_process_unhandled_input(false)
 		set_process_unhandled_key_input(false)
+	if weapon_type.giant:
+			body.mesh = load("res://Models/Parts/mech_arm.obj")
+			barrel.mesh = weapon_type.mesh
+			barrel.material_override = Dataset.player_stats.mech_armor.material
 	if player:
 		weapon_mod = Dataset.get_mod(weapon_type.current_mod)
-		if weapon_type.giant:
-			weapon_type.barrel_mesh = load("res://Models/mech_arm.obj")
+		if get_node_or_null("Body_Mesh/Arm"):
+			$Body_Mesh / Arm.material_override = Dataset.player_stats.body_material
 		if weapon_mod.fire_mode != null:
 			body.material_override = weapon_mod.material
 			barrel.material_override = weapon_mod.material
@@ -204,40 +230,58 @@ func _ready():
 		match_fire_mode_label()
 	
 	init_custom_weapon()
-	
+
 func _physics_process(delta):
 	flash_counter -= delta
 	if flash_counter <= 0:
 		shoot_pos.hide()
-	else:
+	elif ammo_type.muzzle_flash and player:
 		shoot_pos.rotation.z = rand_range( - PI, PI)
 		shoot_pos.show()
-	if manual_reload and not Global.player_inf.dual_wield and not Global.player_inf.disabled:
-		if not Input.is_action_pressed("RELOAD"):
-			$CanvasLayer / VBoxContainer / Reload.visible = false
-			$Reload_Sound.stop()
-		elif not weapon_type.melee and not weapon_type.orgone:
-			if mag_ammo < weapon_type.magazine_size:
-				$CanvasLayer / VBoxContainer / Reload.modulate = Color(1, 0, 0)
-			else:
-				$CanvasLayer / VBoxContainer / Reload.modulate = Color(0, 1, 0)
-			$CanvasLayer / VBoxContainer / Reload.visible = true
+	if player:
+		if Input.is_action_pressed("ARM_SLOT"):
+			if Dataset.player_stats.arms.silencer and not weapon_type.silenced:
+				$Body_Mesh / Silencer.visible = not $Body_Mesh / Silencer.visible
 		body.rotation.x = lerp(body.rotation.x, 0, delta * 10)
 		body.rotation.x = clamp(body.rotation.x, - 0.7, 0.7)
-		if body.rotation.x < - 0.5 and mag_ammo < weapon_type.magazine_size and ammo > 0:
-			reload_timer = 0
-			$Reload_Complete.play()
-			ammo = clamp(ammo, 0, 100000)
-			if ammo >= weapon_type.magazine_size:
-				ammo -= (weapon_type.magazine_size - mag_ammo)
-				mag_ammo = weapon_type.magazine_size
-			elif ammo > 0:
-				var ammo_left = mag_ammo
-				mag_ammo = ammo + mag_ammo
-				mag_ammo = clamp(mag_ammo, 0, weapon_type.magazine_size)
-				ammo -= mag_ammo - ammo_left
-			if weapon_type.revolver:
-				for n in mag_shots_fired:
+		if manual_reload and not Global.player_inf.dual_wield and not Global.player_inf.disabled:
+			if not Input.is_action_pressed("RELOAD"):
+				$CanvasLayer / VBoxContainer / Reload.visible = false
+				$Reload_Sound.stop()
+			elif not weapon_type.melee and not ammo_type.orgone_beam:
+				if mag_ammo < weapon_type.magazine_size:
+					$CanvasLayer / VBoxContainer / Reload.modulate = Color(1, 0, 0)
+				else:
+					$CanvasLayer / VBoxContainer / Reload.modulate = Color(0, 1, 0)
+				$CanvasLayer / VBoxContainer / Reload.visible = true
+			if body.rotation.x < - 0.5 and mag_ammo < weapon_type.magazine_size and ammo > 0:
+				reload_timer = 0
+				$Reload_Complete.play()
+				ammo = clamp(ammo, 0, 100000)
+				if ammo >= weapon_type.magazine_size:
+					ammo -= (weapon_type.magazine_size - mag_ammo)
+					mag_ammo = weapon_type.magazine_size
+				elif ammo > 0:
+					var ammo_left = mag_ammo
+					mag_ammo = ammo + mag_ammo
+					mag_ammo = clamp(mag_ammo, 0, weapon_type.magazine_size)
+					ammo -= mag_ammo - ammo_left
+				if weapon_type.revolver:
+					for n in mag_shots_fired:
+						var n_shell = shell.instance()
+						add_child(n_shell)
+						n_shell.set_as_toplevel(true)
+						shells.append(n_shell)
+						if shells.size() > max_shell_count:
+							shells[0].queue_free()
+							shells.remove(0)
+						n_shell.id = ammo_type.id + " Casing"
+						n_shell.global_transform.origin = $Body_Mesh / ShellPos.global_transform.origin
+						n_shell.velocity = - ($Body_Mesh / ShellPos.global_transform.origin - $Body_Mesh / ShellPos.to_global(Vector3.RIGHT)).normalized() * rand_range(0, 1)
+				mag_shots_fired = 0
+			elif body.rotation.x > 0.5 and mag_ammo > 0:
+				$Reload_Complete.play()
+				for n in clamp(mag_ammo, 0, 30):
 					var n_shell = shell.instance()
 					add_child(n_shell)
 					n_shell.set_as_toplevel(true)
@@ -247,22 +291,8 @@ func _physics_process(delta):
 						shells.remove(0)
 					n_shell.id = ammo_type.id + " Casing"
 					n_shell.global_transform.origin = $Body_Mesh / ShellPos.global_transform.origin
-					n_shell.velocity = - ($Body_Mesh / ShellPos.global_transform.origin - $Body_Mesh / ShellPos.to_global(Vector3.RIGHT)).normalized() * rand_range(0, 1)
-			mag_shots_fired = 0
-		elif body.rotation.x > 0.5 and mag_ammo > 0:
-			$Reload_Complete.play()
-			for n in clamp(mag_ammo, 0, 30):
-				var n_shell = shell.instance()
-				add_child(n_shell)
-				n_shell.set_as_toplevel(true)
-				shells.append(n_shell)
-				if shells.size() > max_shell_count:
-					shells[0].queue_free()
-					shells.remove(0)
-				n_shell.id = ammo_type.id + " Casing"
-				n_shell.global_transform.origin = $Body_Mesh / ShellPos.global_transform.origin
-				n_shell.velocity = - ($Body_Mesh / ShellPos.global_transform.origin - $Body_Mesh / ShellPos.to_global(Vector3.FORWARD)).normalized() * rand_range(1, 10)
-			mag_ammo = 0
+					n_shell.velocity = - ($Body_Mesh / ShellPos.global_transform.origin - $Body_Mesh / ShellPos.to_global(Vector3.FORWARD)).normalized() * rand_range(1, 10)
+				mag_ammo = 0
 	timer -= delta
 	
 	if not manual_reload:
@@ -280,7 +310,7 @@ func _physics_process(delta):
 			ammo = clamp(ammo, 0, 1000)
 	rot_vel -= delta * 100
 	rot_vel = clamp(rot_vel, 0, 100)
-	if not weapon_type.giant:
+	if not weapon_type.giant and not weapon_type.small_arm:
 		barrel.rotation.z -= rot_vel * delta
 	else:
 		barrel.rotation.z = 0
@@ -290,36 +320,26 @@ func _physics_process(delta):
 	if weapon_mod.burst_count != null:
 		b_count = weapon_mod.burst_count
 	burst_shots = clamp(burst_shots, 0, b_count)
-	if not player and weapon_type.orgone:
-		$Energy_Ray.scale.x = lerp($Energy_Ray.scale.x, 0, delta * 15)
-		$Energy_Ray.scale.y = $Energy_Ray.scale.x
-		$Energy_Ray.visible = $Energy_Ray.scale.x > 0.01
-		$Energy_Ray / OmniLight.omni_range = $Energy_Ray.scale.x * 100
+	if not player and ammo_type.orgone_beam:
+		energy_ray.scale.x = lerp(energy_ray.scale.x, 0, delta * 15)
+		energy_ray.scale.y = energy_ray.scale.x
+		energy_ray.visible = energy_ray.scale.x > 0.01
+		energy_light.omni_range = energy_ray.scale.x * 100
 	if burst_shots > 0:
-		
 		shoot(burst_velocity, burst_ignore)
-	if player and weapon_type != Dataset.empty_weapon:
-		
-		if body.mesh != null:
-			var pos = body.mesh.get_aabb().get_center().z - body.mesh.get_aabb().size.z / 2
-			if barrel.mesh != null:
-				pos = barrel.mesh.get_aabb().get_center().z - barrel.mesh.get_aabb().size.z / 2
-			$Position3D.transform.origin.z = pos
-			$Energy_Ray.transform.origin.z = pos
 
 func _process(delta):
 	var camera = get_viewport().get_camera()
 	body.transform.origin.z = lerp(body.transform.origin.z, 0.126, delta * 10)
 	sound_area_node.global_transform.origin = global_transform.origin
-	if ammo <= 0 or weapon_type.melee or weapon_type.orgone:
+	if ammo <= 0 or weapon_type.melee or ammo_type.orgone_beam:
 		ammo_label.hide()
 	else:
 		ammo_label.show()
-		
 	ammo_label.text = str(ammo)
+	
 	magazine_label.text = str(mag_ammo)
 	ammo_label.get_parent().visible = visible
-	
 	if visible:
 		$Energy_Ray.scale.x = lerp($Energy_Ray.scale.x, 0, delta * 15)
 		$Energy_Ray.scale.y = $Energy_Ray.scale.x
@@ -329,19 +349,47 @@ func _process(delta):
 			var dist = global_transform.origin.distance_to(Global.target.global_transform.origin)
 			ammo_label.get_parent().rect_position = camera.unproject_position(ammo_label_pos.global_transform.origin)
 			ammo_label.get_parent().visible = dist < 5
-	
-func set_weapon(w):
+
+func set_weapon(w, update_level = false):
 	weapon_type = w
-	
+	shell = weapon_type.ammo_type.casing_node
 	if not hide:
 		barrel.mesh = weapon_type.barrel_mesh
-		if weapon_type.giant:
-			barrel.material_override = Dataset.get_by_id(Dataset.weapons, "V16").material
-			barrel.mesh = load("res://Models/mech_arm.obj")
-		else:
-			barrel.material_override = weapon_type.material
 		body.mesh = weapon_type.mesh
 		body.material_override = weapon_type.material
+		arm_mesh.mesh = null
+		barrel.transform.origin.z = 0
+		barrel.transform.origin.y = 0
+		arm_mesh.transform.origin.z = 0
+		arm_mesh.transform.origin.y = 0
+		barrel.scale = Vector3.ONE
+		arm_mesh.scale = barrel.scale
+		if weapon_type.giant:
+			arm_mesh.scale = Vector3.ONE * 3.0
+			if get_parent().get_parent() == Global.player_inf:
+				body.scale = Vector3.ONE
+		print(translation.x)
+		if (weapon_type.giant or (weapon_type.small_arm and get_parent() == Global.player_ship and round(translation.x) != 0) or (Dataset.player_stats.mech_core.humanoid and get_parent() == Global.player_ship and round(translation.x) != 0)):
+			barrel.material_override = weapon_type.material
+			arm_mesh.material_override = weapon_type.material
+			body.material_override = Dataset.player_stats.mech_armor.material
+			body.mesh = weapon_type.mesh
+			if get_parent().get_parent() != Global.player_inf:
+				body.mesh = load("res://Models/Parts/mech_arm.obj")
+				arm_mesh.mesh = weapon_type.mesh
+				barrel.transform.origin.z = - 0.65
+				arm_mesh.transform.origin.z = - 0.65
+				if weapon_type.small_arm or not weapon_type.giant:
+					barrel.transform.origin.z *= 1.75
+					barrel.transform.origin.y -= 0.05
+					arm_mesh.transform.origin.z *= 1.75
+					arm_mesh.transform.origin.y -= 0.05
+			else:
+				barrel.transform.origin.z = 0.5
+			barrel.mesh = weapon_type.barrel_mesh
+		else:
+			body.mesh = weapon_type.mesh
+			barrel.material_override = weapon_type.material
 	else:
 		barrel.mesh = null
 		body.mesh = null
@@ -349,6 +397,15 @@ func set_weapon(w):
 	if ammo_type == null:
 		ammo_type = Dataset.ammo_types[0]
 	if player:
+		if arm_2:
+			arm_2.material_override = Dataset.player_stats.body_material
+			if weapon_type.arm_offset or typeof(weapon_type.arm_offset) == TYPE_VECTOR3:
+				
+				arm_2.visible = true
+				arm_2.transform.origin = Vector3( - 0.063, 0.026, - 0.341) - weapon_type.arm_offset
+			else:
+				arm_2.visible = false
+		new_audio.stream = weapon_type.sfx
 		if weapon_type.shield:
 			$Body_Mesh / KinematicBody / CollisionShape.shape = weapon_type.col_shape
 			$Body_Mesh / KinematicBody / CollisionShape.disabled = false
@@ -357,20 +414,28 @@ func set_weapon(w):
 		else:
 			$Body_Mesh / KinematicBody.set_collision_layer_bit(3, 0)
 			$Body_Mesh / KinematicBody / CollisionShape.visible = false
-		if ammo_setup:
-			ammo = clamp(weapon_type.magazine_size * 3 * weapon_type.loadout, 0, 1000)
+		if ammo_setup or update_level:
+			level = weapon_type.level
+			ammo = int(clamp(weapon_type.magazine_size * 3 * weapon_type.loadout * weapon_type.ammo_modifier, 0, 1000))
 			mag_ammo = clamp(weapon_type.magazine_size, 0, ammo)
 			ammo -= mag_ammo
 			ammo = clamp(ammo, 0, 1000)
 			ammo_setup = false
 		else:
-			ammo = clamp(weapon_type.magazine_size * 2 * weapon_type.loadout, 0, 500)
+			ammo = clamp(weapon_type.magazine_size * 2 * weapon_type.loadout * weapon_type.ammo_modifier, 0, 500)
 		if on_foot:
-			ammo = clamp(weapon_type.magazine_size * 2, 0, 500)
+			ammo = clamp(weapon_type.magazine_size * 2 * weapon_type.ammo_modifier, 0, 500)
 		max_ammo = weapon_type.ammo
-
 	fire_mode = weapon_type.fire_mode
-	
+	if player and weapon_type != Dataset.empty_weapon:
+		var pos = 0
+		if body.mesh != null:
+			pos = body.mesh.get_aabb().get_center().z - body.mesh.get_aabb().size.z / 2
+		if barrel.mesh != null:
+			pos += barrel.mesh.get_aabb().get_center().z - barrel.mesh.get_aabb().size.z * barrel.scale.z / 2 + barrel.transform.origin.z
+		shoot_pos.transform.origin.z = pos
+		$Body_Mesh / Silencer.transform.origin.z = pos
+		energy_ray.transform.origin.z = pos
 	if player:
 		if weapon_type.single_use:
 			ammo = 0
@@ -378,6 +443,30 @@ func set_weapon(w):
 		if weapon_mod.fire_mode != null:
 			fire_mode_index = weapon_mod.fire_mode
 			fire_mode = fire_mode_index
+		if body.mesh != null:
+			if Dataset.player_stats.arms.silencer and not weapon_type.silenced:
+				$Body_Mesh / Silencer.visible = true
+				$Body_Mesh / Silencer / MeshInstance.mesh = Dataset.player_stats.arms.mesh
+				$Body_Mesh / Silencer / MeshInstance.material_override = Dataset.player_stats.arms.material
+			else:
+				$Body_Mesh / Silencer.visible = false
+			var ff = Vector3.ZERO
+			var ff_a = []
+			
+			for f in body.mesh.get_faces():
+				if f.z <= ff.z:
+					ff = f
+					ff_a.append(f)
+			ff = Vector3.ZERO
+			for f in ff_a:
+				ff += f
+			ff /= ff_a.size()
+			ff.z = - 10.0
+			ff.x = 0
+
+			$Body_Mesh / Silencer.transform.origin.y = ff.y
+		else:
+			$Body_Mesh / Silencer.visible = false
 		match_fire_mode_label()
 	reload_timer = 0
 	match_fire_mode_label()
@@ -391,20 +480,19 @@ func shoot(velocity: Vector3 = Vector3.ZERO, ignore: KinematicBody = KinematicBo
 	
 	rot_vel += 5
 	
-	if timer > 0 or reload_timer > 0 or destroyed or (rot_vel < 50 and barrel.mesh != null and not weapon_type.giant):
+	if timer > 0 or reload_timer > 0 or destroyed or (rot_vel < 50 and barrel.mesh != null and not weapon_type.giant and not weapon_type.small_arm) or weapon_type.id == "Empty":
 		return Vector3.ZERO
-	if weapon_type.orgone and Global.target.orgone <= 0:
+	if ammo_type.orgone_beam and Global.target.orgone <= 0:
 		return Vector3.ZERO
-		
 	if weapon_type.melee:
-		timer += weapon_type.rof
-		body.transform.origin.z = - 0.8
+		timer += weapon_type.get_rof(level)
+		body.transform.origin.z = - weapon_type.effective_range * 0.5
 		body.rotation.x = - 0.5
 		if player:
 			var n_audio = new_audio.duplicate()
 			n_audio.stream = weapon_type.sfx
 			if max_ammo > 0 and player:
-				if not weapon_type.orgone:
+				if not ammo_type.orgone_beam:
 					n_audio.pitch_scale = mag_ammo / weapon_type.magazine_size * 0.5 + 0.5
 				else:
 					n_audio.pitch_scale = min(weapon_owner.orgone, weapon_type.energy) / weapon_type.energy * 0.5 + 0.75
@@ -430,7 +518,6 @@ func shoot(velocity: Vector3 = Vector3.ZERO, ignore: KinematicBody = KinematicBo
 					var t_a = true
 					var bv: Vector3 = - (shoot_pos.global_transform.origin - shoot_pos.to_global(Vector3.FORWARD)) * weapon_type.energy
 					
-					
 					if "vehicle" in col:
 						if "target_acquired" in col.vehicle:
 							if not col.vehicle.target_acquired:
@@ -455,29 +542,32 @@ func shoot(velocity: Vector3 = Vector3.ZERO, ignore: KinematicBody = KinematicBo
 		burst_ignore = ignore
 	if burst_shots > 0:
 		burst_shots -= 1
-	timer += weapon_type.rof
+	timer += weapon_type.get_rof(level)
 	if fire_mode == SINGLE and not player:
 		timer += weapon_type.rof
-	if not weapon_type.orgone:
+	if not ammo_type.orgone_beam:
 		mag_ammo -= 1
 	if player:
-		
-		Dataset.player_stats.ammo_debt += ammo_type.price
+		if Dataset.current_location.id != "EFP HQ":
+			Dataset.player_stats.ammo_debt += ammo_type.price
+		for d in get_tree().get_nodes_in_group("dodgers"):
+			d.dodge()
 		ammo_type.amount_owned -= 1
-	if player and not weapon_type.silenced:
+	if player and not weapon_type.silenced and not $Body_Mesh / Silencer.visible:
 		
 		
 		for b in sound_area_node.in_range:
 			if b.has_method("alert"):
 				b.alert(Global.target.global_transform.origin, true)
-	body.transform.origin.z = 0.3
-	if mag_ammo <= 0 and not weapon_type.orgone:
+	if not ammo_type.fire:
+		body.transform.origin.z = 0.3
+	if mag_ammo <= 0 and not ammo_type.orgone_beam:
 		
 		reload_timer += 1
 	
 	var total_bv = Vector3.ZERO
 	
-	if not weapon_type.orgone:
+	if not ammo_type.orgone_beam:
 		for b in ammo_type.projectile_count:
 			var new_bullet
 			if not weapon_type.taser and not ammo_type.rocket:
@@ -491,6 +581,10 @@ func shoot(velocity: Vector3 = Vector3.ZERO, ignore: KinematicBody = KinematicBo
 				new_bullet = bullet_taser.instance()
 				add_child(new_bullet)
 				new_bullet.start_pos = shoot_pos
+				
+			
+			
+			
 			if player:
 				new_bullet.set_collision_mask_bit(4, 1)
 				new_bullet.player_bullet = true
@@ -502,14 +596,16 @@ func shoot(velocity: Vector3 = Vector3.ZERO, ignore: KinematicBody = KinematicBo
 			if ammo_type.explosive:
 				new_bullet.explosive = true
 			if not weapon_type.taser:
-				new_bullet.toxic_damage = weapon_type.toxic_damage
+				new_bullet.toxic_damage = ammo_type.toxic_damage
 			new_bullet.set_as_toplevel(true)
 			new_bullet.weapon_type = weapon_type
 			new_bullet.ammo_type = ammo_type
 			if not weapon_type.taser:
 				new_bullet.set_tracer_material(weapon_type.tracer_material)
 			new_bullet.add_collision_exception_with(ignore)
-			var e = weapon_type.energy
+			var e = weapon_type.get_m_velocity(level)
+			if $Body_Mesh / Silencer.visible and not weapon_type.silenced:
+				e = clamp(e, 0, 340)
 			if weapon_mod != null:
 				e *= weapon_mod.energy_bonus
 				if weapon_mod.sub_sonic:
@@ -519,14 +615,23 @@ func shoot(velocity: Vector3 = Vector3.ZERO, ignore: KinematicBody = KinematicBo
 			if ammo_type.rocket:
 				new_bullet.rocket = true
 				
-			var bv: Vector3 = shoot_pos.global_transform.origin - shoot_pos.to_global((Vector3.FORWARD) * (weapon_type.energy))
-			bv = bv.rotated(Vector3.UP, rand_range( - weapon_type.spread, weapon_type.spread))
-			bv = bv.rotated(shoot_pos.global_transform.origin - shoot_pos.to_global(Vector3.LEFT), rand_range( - weapon_type.spread, weapon_type.spread))
+			var bv: Vector3 = shoot_pos.global_transform.origin - shoot_pos.to_global((Vector3.FORWARD) * (e))
+			
+			var spread = weapon_type.spread
+			if ammo_type.accuracy_override != - 1:
+				spread = ammo_type.accuracy_override
+			bv = bv.rotated(Vector3.UP, rand_range( - spread, spread))
+			bv = bv.rotated(shoot_pos.global_transform.origin - shoot_pos.to_global(Vector3.LEFT), rand_range( - spread, spread))
 			
 			total_bv += bv
 			if ammo_type.rocket:
 				new_bullet.rocket_velocity -= bv * 0.01
-			new_bullet.velocity -= bv * 0.5 - velocity
+			
+			
+			if ammo_type.smart:
+				new_bullet.add_to_group("smart_bullets")
+			new_bullet.velocity -= bv * 0.5
+			
 			new_bullet.global_transform.origin = shoot_pos.global_transform.origin
 	else:
 		if player:
@@ -536,11 +641,15 @@ func shoot(velocity: Vector3 = Vector3.ZERO, ignore: KinematicBody = KinematicBo
 			$Energy_Ray.scale.x = min(weapon_owner.orgone, weapon_type.energy) / weapon_type.energy
 			$Energy_Ray.scale.y = min(weapon_owner.orgone, weapon_type.energy) / weapon_type.energy
 
+			
+
+			
 			var col = $Orgone_Ray.get_collider()
 			$Energy_Ray.visible = true
 			$Energy_Ray / Orgone_Hit.global_transform.origin = $Orgone_Ray.get_collision_point()
 			$Energy_Ray.scale.z = $Position3D.global_transform.origin.distance_to($Orgone_Ray.get_collision_point())
 			var bv: Vector3 = - (shoot_pos.global_transform.origin - shoot_pos.to_global(Vector3.FORWARD)) * weapon_type.energy
+			var hit = false
 			if col.has_method("damage"):
 				$Energy_Ray / Orgone_Hit.pitch_scale = 1.0
 				if player:
@@ -548,18 +657,23 @@ func shoot(velocity: Vector3 = Vector3.ZERO, ignore: KinematicBody = KinematicBo
 					add_child(hm)
 					hm.set_as_toplevel(true)
 					hm.global_transform.origin = $Energy_Ray / Orgone_Hit.global_transform.origin
-					
+					if "vehicle" in col:
+						hit = col.vehicle
 				col.damage(bv, min(weapon_owner.orgone, weapon_type.energy) / weapon_type.energy)
 			else:
 				$Energy_Ray / Orgone_Hit.pitch_scale = 2.0
 			$Energy_Ray / Orgone_Hit.play()
 			if player:
 				Global.target.orgone -= min(Global.target.orgone, weapon_type.energy * 0.25)
+				if hit:
+					Global.target.orgone += min(Global.target.orgone, weapon_type.energy * 0.1)
+					hit.orgone -= min(Global.target.orgone, weapon_type.energy * 0.1)
 			else:
 				weapon_owner.orgone -= min(weapon_owner.orgone, weapon_type.energy)
-	if not ammo_type.fire and not weapon_type.orgone:
+				
+	if not ammo_type.fire and not ammo_type.orgone_beam:
 		flash_counter = get_physics_process_delta_time() * 2
-	if not weapon_type.revolver and not weapon_type.orgone and player and not ammo_type.caseless:
+	if not weapon_type.revolver and not ammo_type.orgone_beam and player and not ammo_type.caseless:
 		var n_shell = shell.instance()
 		add_child(n_shell)
 		n_shell.set_as_toplevel(true)
@@ -569,18 +683,20 @@ func shoot(velocity: Vector3 = Vector3.ZERO, ignore: KinematicBody = KinematicBo
 			shells.remove(0)
 		n_shell.id = ammo_type.id + " Casing"
 		n_shell.global_transform.origin = $Body_Mesh / ShellPos.global_transform.origin
-		n_shell.velocity = - ($Body_Mesh / ShellPos.global_transform.origin - $Body_Mesh / ShellPos.to_global(Vector3.RIGHT)).normalized() * rand_range(7, 10)
+		n_shell.velocity = sign(transform.origin.x) * - ($Body_Mesh / ShellPos.global_transform.origin - $Body_Mesh / ShellPos.to_global(Vector3.RIGHT)).normalized() * rand_range(7, 10)
 	else:
 		mag_shots_fired += 1
 		
 	if player:
+		
 		var n_audio = new_audio.duplicate()
-		n_audio.stream = weapon_type.sfx
+		
 		if max_ammo > 0 and player:
-			if not weapon_type.orgone:
+			if not ammo_type.orgone_beam:
 				n_audio.pitch_scale = mag_ammo / weapon_type.magazine_size * 0.5 + 0.5
 			else:
-				n_audio.pitch_scale = min(weapon_owner.orgone, weapon_type.energy) / weapon_type.energy * 0.5 + 0.75
+				pass
+				
 		add_child(n_audio)
 		n_audio.play()
 		audio_players.append(n_audio)
@@ -592,33 +708,36 @@ func shoot(velocity: Vector3 = Vector3.ZERO, ignore: KinematicBody = KinematicBo
 				ap.remove(ap.find(a))
 		audio_players = ap
 	else:
-		new_audio.stream = weapon_type.sfx
+		
 		if global_transform.origin.distance_to(Global.target.global_transform.origin) > 40:
 			new_audio.bus = "Distant"
+			if not weapon_type.silenced:
+				new_audio.play()
 		else:
 			new_audio.bus = "Gunshots"
-		new_audio.play()
+			new_audio.play()
+		
 	if ammo_type.rocket:
 		return total_bv * 0.01
 	return total_bv
 
 func _input(event):
-	if Global.player_inf.disabled or not visible or Global.player_inf.dual_wield or weapon_type.melee or weapon_type.orgone:
+	if Global.player_inf.disabled or not visible or Global.player_inf.dual_wield or weapon_type.melee or ammo_type.orgone_beam:
 		return
-	
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-		
 		if Input.is_action_pressed("RELOAD") and manual_reload:
 			if is_custom_weapon and weapon_type.has_flag("custom_reload") and custom_weapon_scene.has_method("on_reload"):
 				custom_weapon_scene.on_reload()
 				return
 			
 			var sensitivity = Global.mouse_sens
+			var inv_y = 1
+			if Global.invert_y:
+				inv_y = - 1
 			var rot_deg_y = deg2rad(event.relative.y * - 1 * sensitivity)
 		
-			body.rotate_x(clamp(rot_deg_y, - 1, 1))
+			body.rotate_x(clamp(rot_deg_y * inv_y, - 1, 1))
 			
 			body.rotation.x = clamp(body.rotation.x, - 0.7, 0.7)
-
 			$Reload_Sound.play()
 			$Reload_Sound.seek(abs(rot_deg_y))

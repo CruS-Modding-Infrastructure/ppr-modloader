@@ -6,6 +6,7 @@ onready var ammo_class = $AmmoClass
 onready var blank_ammo_type = ammo_class.ammo.new()
 
 var modded_weapons = []
+var modded_ammo = []
 
 func new_weapon():
 	var new_weapon = weapon_class.weapon.new()
@@ -22,6 +23,19 @@ func add_weapon(recived_weapon):
 
 	Dataset.weapons.append(recived_weapon)
 	modded_weapons.append(recived_weapon)
+
+func new_ammo():
+	var new_ammo = ammo_class.ammo.new()
+	return new_ammo
+
+func add_ammo(recived_ammo):
+	recived_ammo.set_meta("modded", true)
+	
+	if Dataset.get_by_id(Dataset.ammo_types, recived_ammo.id) != null:
+		Dataset.ammo_types.erase(Dataset.get_by_id(Dataset.weapons, recived_ammo.id))
+	
+	Dataset.ammo_types.append(recived_ammo)
+	modded_ammo.append(recived_ammo)
 
 func fix_ammo():
 	for weapon in modded_weapons:

@@ -255,4 +255,5 @@ class weapon:
 		ammo_type_fix = recived_type
 	
 	func fix_ammo_type():
-		ammo_type = Dataset.get_by_id(Dataset.ammo_types, ammo_type_fix)
+		if Dataset.get_by_id(Dataset.ammo_types, ammo_type_fix) != null:
+			ammo_type = Dataset.get_by_id(Dataset.ammo_types, ammo_type_fix)

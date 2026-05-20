@@ -64,6 +64,7 @@ func add_location(recived_location):
 	Dataset.locations.append(recived_location)
 
 var objects = {}
+var weapons = {}
 
 func add_object(recived_location_id, recived_path, recived_position, recived_rotation):
 	if not recived_location_id in objects:
@@ -71,12 +72,32 @@ func add_object(recived_location_id, recived_path, recived_position, recived_rot
 	
 	objects[recived_location_id].append([recived_path, recived_position, recived_rotation])
 
+func add_weapon(recived_location_id, recived_weapon_id, recived_position, recived_rotation):
+	if not recived_location_id in weapons:
+		weapons[recived_location_id] = []
+	
+	weapons[recived_location_id].append([recived_weapon_id, recived_position, recived_rotation])
+
 func spawn_objects():
-	if Dataset.current_location.id != null and Dataset.current_location.id in objects:
-		for i in objects[Dataset.current_location.id]:
-			var new_object = load(i[0]).instance()
-			
-			Global.player.get_parent().add_child(new_object)
-			
-			new_object.global_position = i[1]
-			new_object.rotation_degrees = i[2]
+	if Dataset.current_location.id != null:
+		if Dataset.current_location.id in objects:
+			for i in objects[Dataset.current_location.id]:
+				var new_object = load(i[0]).instance()
+				
+				Global.player.get_parent().add_child(new_object)
+				
+				new_object.global_position = i[1]
+				new_object.rotation_degrees = i[2]
+		
+		if Dataset.current_location.id in weapons:
+			for i in weapons[Dataset.current_location.id]:
+				if Dataset.get_by_id(Dataset.weapons, i[0]) != null:
+					var new_weapon = load("res://Gibs/Weapon_Item.tscn").instance()
+					
+					new_weapon.get_node("Weapon_Item").weapon_id = i[0]
+					new_weapon.get_node("Weapon_Item").label_disabled = true
+					
+					Global.player.get_parent().add_child(new_weapon)
+					
+					new_weapon.global_position = i[1]
+					new_weapon.rotation_degrees = i[2]

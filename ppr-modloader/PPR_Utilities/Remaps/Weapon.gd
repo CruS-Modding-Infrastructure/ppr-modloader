@@ -86,8 +86,9 @@ func init_custom_weapon():
 				add_child(custom_weapon_scene)
 			
 			if weapon_type.has_flag("custom_mesh"):
-				body.mesh = null
 				barrel.mesh = null
+				body.mesh = null
+				arm_mesh.mesh = null
 			
 			if weapon_type.has_flag("hide_status_label"):
 				$CanvasLayer.hide()
@@ -215,9 +216,10 @@ func _ready():
 		set_process_unhandled_input(false)
 		set_process_unhandled_key_input(false)
 	if weapon_type.giant:
-			body.mesh = load("res://Models/Parts/mech_arm.obj")
-			barrel.mesh = weapon_type.mesh
-			barrel.material_override = Dataset.player_stats.mech_armor.material
+			if not modded and not weapon_type.has_flag("custom_mesh"):
+				body.mesh = load("res://Models/Parts/mech_arm.obj")
+				barrel.mesh = weapon_type.mesh
+				barrel.material_override = Dataset.player_stats.mech_armor.material
 	if player:
 		weapon_mod = Dataset.get_mod(weapon_type.current_mod)
 		if get_node_or_null("Body_Mesh/Arm"):

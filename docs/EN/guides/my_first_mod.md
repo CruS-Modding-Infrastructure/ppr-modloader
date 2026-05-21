@@ -14,26 +14,26 @@ All code in Godot is written in the GDScript programming language
 Without going into too much detail, this language is very similar to Python
 # That's all well and good, but where do I start?
 
-The first step is to decompile Psycho Patrol R 
-At this point, we'll have the scripts, textures, and game models we'll be working with
+Requirements:
+- [Godot v3.6](https://godotengine.org/download/archive/3.6-stable/)
+- [Godot RE Tools](https://github.com/GDRETools/gdsdecomp/releases)
+- [Psycho Patrol R Mod Loader](https://github.com/CruS-Modding-Infrastructure/ppr-modloader/releases)
+- [TrenchBroom v2023.1](https://github.com/TrenchBroom/TrenchBroom/releases/tag/v2023.1) (if you're planning on making custom levels)
 
-To do this, use the Godot RE Tools
-
-Next, download PPR Modloader and move the **addons** and **PPR_Utilities** folders to the folder with the decompiled Psycho Patrol R
-
-Open **project.godot** in any text editor, look for the line `[autoload]` and insert these lines under it:
-
-```
+Instructions:
+1. Decompile the game's `psychopatrolr.pck` file using Godot RE Tools ([specific instructions here](https://wiki.godotmodding.com/guides/modding/tools/decompile_games/))
+2. You should now have a decompiled Godot project for Psycho Patrol R, you should move its folder to somewhere that's easy to find later
+3. Copy the `addons` folder and `PPR_Utilities` folder from the Psycho Patrol R Mod Loader into the decompiled project
+4. Open the `project.godot` file with a text editor
+5. Find the `[autoload]` line and paste these lines directly below it:
+```ini
 PPRUtilities="*res://PPR_Utilities/init.tscn"
 ModLoaderStore="*res://addons/mod_loader/mod_loader_store.gd"
 ModLoader="*res://addons/mod_loader/mod_loader.gd"
 ```
+6. Save and close the `project.godot` file
+7. Run the Godot v3.6 editor
+8. Click the "Import" button and find the decompiled project's folder
+9. "Psycho Patrol R" should now be added to the project list and you can open the project in the Godot editor from here
 
-Close and save **project.godot**
-
-Running Godot v3.6
-
-Click the `Import` button and look for the decompiled Psycho Patrol R
-
-After that, we can open the project and start creating mods
-# Creating a basic mod
+To update your project when PPR receives a new patch, you will have to repeat these instructions. Though make sure to backup your `mods-unpacked` folder beforehand and then move it into the new updated project afterwards.

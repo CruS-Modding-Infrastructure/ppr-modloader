@@ -11,13 +11,16 @@ This module allows you to interact with the locations of the game
 Returns a new location
 
 `add_location(recived_location : location) -> void`  
-Adds a new location to the game
-
-recived_location: The new location that will be added to the game must be the `location` class for it to work correctly
+Adds a new location to the game  
+recived_location - The new location that will be added to the game. Must be the `location` class for it to work correctly
 
 `add_object(location_id: String, path: String, position: Vector3, rotation: Vector3) -> void`  
-Adds an object to the list of loading objects of the location
+Adds an object to the list of loading objects of the location  
 When entering a location with this ID, it will spawn an object at the specified point
+
+`add_weapon(location_id: String, weapon_id: String, position: Vector3, rotation: Vector3) -> void`  
+Adds a weapon to the list of loading objects of the location  
+When entering a location with this ID, it will spawn a weapon at the specified point
 # Classes:
 
 ```python

@@ -11,9 +11,15 @@ This module allows you to create your own weapons
 Returns new weapons
 
 `add_weapon(recived_weapon : weapon) -> void`  
-Adds a new weapon to the game
+Adds a new weapon to the game  
+recived_weapon - The new weapon that will be added to the game. Must be the `weapon` class for it to work correctly
 
-recived_weapon: The new weapon that will be added to the game must be the `weapon` class for it to work correctly
+`new_ammo() -> ammo`  
+Returns a new ammo type
+
+`add_ammo(recived_ammo : ammo) -> void`  
+Adds a new ammo type to the game  
+recived_ammo - The new ammo type that will be added to the game. Must be the `ammo` class for it to work properly
 # Classes:
 
 ```python
@@ -87,4 +93,46 @@ func has_flag(recived_flag): # Checks if the weapon has a certain flag
 	
 func set_flags(recived_flags: Array): # Sets flags for weapons
 	custom_weapon_flags = recived_flags
+```
+
+```python
+class ammo:
+	var id: String = "Pure void"
+	var bullet_node = preload("res://Bullets/Bullet3D.tscn")
+	var casing_node = preload("res://Gibs/Shell.tscn")
+	var max_amount = 9999
+	var amount_owned = 0
+	var loadout = 0
+	var local_load = 0
+	
+	var max_loadout = 2000
+	var caseless = false
+	var projectile_count: int = 1
+	var accuracy_override: float = - 1
+	var price: float = 14.5
+	var piercing_ratio: float = 0.0
+	var breaching = false
+	var fire = false
+	var bouncy = false
+	var bounciness = 0.3
+	var orgone_beam = false
+	var air_burst = false
+	var underwater = false
+	var ricochet = false
+	var guided = false
+	var smart = false
+	var timer = 0
+	var explosive: float = false
+	var toxic = false
+	var toxic_damage = 0
+	var non_lethal_damage = 0
+	var explosive_charge: float = 0
+	var dna_tracker = false
+	var explosion_radius: float = 0
+	var rocket = false
+	var rope = false
+	var recoil = 1.0
+	var muzzle_flash = true
+	var ammo_mass: float = 320
+	var projectile_mass: float = 100
 ```

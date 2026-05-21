@@ -11,9 +11,15 @@
 Возвращает новое оружие
 
 `add_weapon(recived_weapon : weapon) -> void`  
-Добавляет новое оружие в игру
+Добавляет новое оружие в игру  
+recived_weapon - Новое оружие которое будет добавлено в игру. Должен являться классом `weapon` для корректной работы
 
-recived_weapon: Новое оружие которое будет добавлено в игру, должен являться классом `weapon` для корректной работы
+`new_ammo() -> ammo`  
+Возвращает новый тип патронов
+
+`add_ammo(recived_ammo : ammo) -> void`  
+Добавляет новой тип патронов в игру  
+recived_ammo - Новый тип патронов которой будет добавлено в игру. Должен являться классом `ammo` для корректной работы
 # Классы:
 
 ```python
@@ -87,4 +93,46 @@ func has_flag(recived_flag): # Проверяет есть ли у оружия 
 	
 func set_flags(recived_flags: Array): # Задаёт флаги оружию
 	custom_weapon_flags = recived_flags
+```
+
+```python
+class ammo:
+	var id: String = "Pure void"
+	var bullet_node = preload("res://Bullets/Bullet3D.tscn")
+	var casing_node = preload("res://Gibs/Shell.tscn")
+	var max_amount = 9999
+	var amount_owned = 0
+	var loadout = 0
+	var local_load = 0
+	
+	var max_loadout = 2000
+	var caseless = false
+	var projectile_count: int = 1
+	var accuracy_override: float = - 1
+	var price: float = 14.5
+	var piercing_ratio: float = 0.0
+	var breaching = false
+	var fire = false
+	var bouncy = false
+	var bounciness = 0.3
+	var orgone_beam = false
+	var air_burst = false
+	var underwater = false
+	var ricochet = false
+	var guided = false
+	var smart = false
+	var timer = 0
+	var explosive: float = false
+	var toxic = false
+	var toxic_damage = 0
+	var non_lethal_damage = 0
+	var explosive_charge: float = 0
+	var dna_tracker = false
+	var explosion_radius: float = 0
+	var rocket = false
+	var rope = false
+	var recoil = 1.0
+	var muzzle_flash = true
+	var ammo_mass: float = 320
+	var projectile_mass: float = 100
 ```

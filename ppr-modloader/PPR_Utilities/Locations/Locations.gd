@@ -10,10 +10,6 @@ func on_ready_locations_check():
 			check_locations(save)
 		
 		$CheckTimer.stop()
-		
-		for level in Dataset.locations:
-			print(level.id)
-			print(level.level)
 
 func check_locations(recived_save_path):
 	var save_game = File.new()
@@ -66,19 +62,27 @@ func add_location(recived_location):
 var objects = {}
 var weapons = {}
 
-func add_object(recived_location_id, recived_path, recived_position, recived_rotation):
+func spawn_object(recived_location_id, recived_path, recived_position, recived_rotation):
 	if not recived_location_id in objects:
 		objects[recived_location_id] = []
 	
 	objects[recived_location_id].append([recived_path, recived_position, recived_rotation])
 
-func add_weapon(recived_location_id, recived_weapon_id, recived_position, recived_rotation):
+# Deprecated
+func add_object(recived_location_id, recived_path, recived_position, recived_rotation):
+	spawn_object(recived_location_id, recived_path, recived_position, recived_rotation)
+
+func spawn_weapon(recived_location_id, recived_weapon_id, recived_position, recived_rotation):
 	if not recived_location_id in weapons:
 		weapons[recived_location_id] = []
 	
 	weapons[recived_location_id].append([recived_weapon_id, recived_position, recived_rotation])
 
-func spawn_objects():
+# Deprecated
+func add_weapon(recived_location_id, recived_weapon_id, recived_position, recived_rotation):
+	spawn_weapon(recived_location_id, recived_weapon_id, recived_position, recived_rotation)
+
+func init_spawn_objects():
 	if Dataset.current_location.id != null:
 		if Dataset.current_location.id in objects:
 			for i in objects[Dataset.current_location.id]:

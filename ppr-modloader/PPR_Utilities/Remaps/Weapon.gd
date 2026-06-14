@@ -216,7 +216,7 @@ func _ready():
 		set_process_unhandled_input(false)
 		set_process_unhandled_key_input(false)
 	if weapon_type.giant:
-			if not modded and not weapon_type.has_flag("custom_mesh"):
+			if not modded:
 				body.mesh = load("res://Models/Parts/mech_arm.obj")
 				barrel.mesh = weapon_type.mesh
 				barrel.material_override = Dataset.player_stats.mech_armor.material

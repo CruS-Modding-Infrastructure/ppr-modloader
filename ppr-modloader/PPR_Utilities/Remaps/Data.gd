@@ -1,4 +1,4 @@
-extends "res://Scripts/Data.gd"
+extends "_orig_Data.gd"
 
 # QuestLoader changes
 

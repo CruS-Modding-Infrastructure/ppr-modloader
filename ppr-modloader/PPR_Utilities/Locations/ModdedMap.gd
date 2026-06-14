@@ -17,7 +17,7 @@ func _ready():
 				i += 1
 	loc_list.select(0)
 	
-	PPRUtilities.locations.spawn_objects()
+	PPRUtilities.locations.init_spawn_objects()
 	
 	_on_Location_List_item_selected(0)
 

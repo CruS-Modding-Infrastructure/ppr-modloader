@@ -13,29 +13,31 @@ func new_weapon():
 	return new_weapon
 
 func add_weapon(recived_weapon):
-	recived_weapon.set_meta("modded", true)
-	
-	if Dataset.get_by_id(Dataset.weapons, recived_weapon.id) != null:
-		Dataset.weapons.erase(Dataset.get_by_id(Dataset.weapons, recived_weapon.id))
-	
-	if recived_weapon.ammo_type == null:
-		recived_weapon.ammo_type = blank_ammo_type
+	if PPRUtilities.enabled:
+		recived_weapon.set_meta("modded", true)
+		
+		if Dataset.get_by_id(Dataset.weapons, recived_weapon.id) != null:
+			Dataset.weapons.erase(Dataset.get_by_id(Dataset.weapons, recived_weapon.id))
+		
+		if recived_weapon.ammo_type == null:
+			recived_weapon.ammo_type = blank_ammo_type
 
-	Dataset.weapons.append(recived_weapon)
-	modded_weapons.append(recived_weapon)
+		Dataset.weapons.append(recived_weapon)
+		modded_weapons.append(recived_weapon)
 
 func new_ammo():
 	var new_ammo = ammo_class.ammo.new()
 	return new_ammo
 
 func add_ammo(recived_ammo):
-	recived_ammo.set_meta("modded", true)
-	
-	if Dataset.get_by_id(Dataset.ammo_types, recived_ammo.id) != null:
-		Dataset.ammo_types.erase(Dataset.get_by_id(Dataset.weapons, recived_ammo.id))
-	
-	Dataset.ammo_types.append(recived_ammo)
-	modded_ammo.append(recived_ammo)
+	if PPRUtilities.enabled:
+		recived_ammo.set_meta("modded", true)
+		
+		if Dataset.get_by_id(Dataset.ammo_types, recived_ammo.id) != null:
+			Dataset.ammo_types.erase(Dataset.get_by_id(Dataset.weapons, recived_ammo.id))
+		
+		Dataset.ammo_types.append(recived_ammo)
+		modded_ammo.append(recived_ammo)
 
 func fix_ammo():
 	for weapon in modded_weapons:

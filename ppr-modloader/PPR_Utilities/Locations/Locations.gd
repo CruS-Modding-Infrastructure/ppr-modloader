@@ -52,31 +52,34 @@ func new_location():
 	return location_class.location.new()
 
 func add_location(recived_location):
-	recived_location.set_meta("modded", true)
-	
-	if Dataset.get_by_id(Dataset.locations, recived_location.id) != null:
-		Dataset.locations.erase(Dataset.get_by_id(Dataset.locations, recived_location.id))
+	if PPRUtilities.enabled:
+		recived_location.set_meta("modded", true)
+		
+		if Dataset.get_by_id(Dataset.locations, recived_location.id) != null:
+			Dataset.locations.erase(Dataset.get_by_id(Dataset.locations, recived_location.id))
 
-	Dataset.locations.append(recived_location)
+		Dataset.locations.append(recived_location)
 
 var objects = {}
 var weapons = {}
 
 func spawn_object(recived_location_id, recived_path, recived_position, recived_rotation):
-	if not recived_location_id in objects:
-		objects[recived_location_id] = []
-	
-	objects[recived_location_id].append([recived_path, recived_position, recived_rotation])
+	if PPRUtilities.enabled:
+		if not recived_location_id in objects:
+			objects[recived_location_id] = []
+		
+		objects[recived_location_id].append([recived_path, recived_position, recived_rotation])
 
 # Deprecated
 func add_object(recived_location_id, recived_path, recived_position, recived_rotation):
 	spawn_object(recived_location_id, recived_path, recived_position, recived_rotation)
 
 func spawn_weapon(recived_location_id, recived_weapon_id, recived_position, recived_rotation):
-	if not recived_location_id in weapons:
-		weapons[recived_location_id] = []
-	
-	weapons[recived_location_id].append([recived_weapon_id, recived_position, recived_rotation])
+	if PPRUtilities.enabled:
+		if not recived_location_id in weapons:
+			weapons[recived_location_id] = []
+		
+		weapons[recived_location_id].append([recived_weapon_id, recived_position, recived_rotation])
 
 # Deprecated
 func add_weapon(recived_location_id, recived_weapon_id, recived_position, recived_rotation):

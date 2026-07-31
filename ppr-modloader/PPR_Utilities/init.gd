@@ -2,13 +2,14 @@ extends Node
 
 # TODO: Made a config file or something for disabling PPR Utils
 # It's probably will be needed for big mods like online multiplayer and etc. (and maybe it's a huge mistake)
-var enabled = true
+var enabled = false
 
 onready var main_menu = $MainMenu
 onready var locations = $Locations
 onready var weapons = $Weapons
+onready var items = $Items
 
-const SCRIPT_EXTS: = {
+var SCRIPT_EXTS: = {
 	"res://Scripts/Info_Panel.gd": "res://PPR_Utilities/Remaps/Info_Panel.gd",
 	"res://Scripts/Map.gd": "res://PPR_Utilities/Remaps/Map.gd",
 	"res://Scripts/Data.gd": "res://PPR_Utilities/Remaps/Data.gd",
@@ -16,18 +17,29 @@ const SCRIPT_EXTS: = {
 	#"res://Original_script.gd": "res://Remaped_script.gd"
 }
 
-const SCENE_EXTS: = {
+var SCENE_EXTS: = {
 	#"res://Original_scene.tscn": "res://Remaped_scene.tscn",
 }
 
-# store references to scripts and scenes here so they wont be unloaded from memory
+var config = {
+	"enabled": true
+}
+
+func _init():
+	load_config()
+	
+	if not enabled:
+		SCRIPT_EXTS = {"res://Scripts/Info_Panel.gd": "res://PPR_Utilities/Remaps/Info_Panel.gd"}
+		SCENE_EXTS = {}
+	
+	init_scripts()
+	init_scenes()
+
+func is_enabled():
+	return enabled
+
 var _scripts: = []
 var _scenes: = []
-
-func _init() -> void:
-	if enabled:
-		init_scripts()
-		init_scenes()
 
 func init_scripts():
 	for k in SCRIPT_EXTS:
@@ -70,3 +82,20 @@ func init_scenes():
 			scene_new.take_over_path(path_orig)
 
 			_scenes.append(scene_new)
+
+func load_config():
+	var config = ConfigFile.new()
+	
+	var err = config.load("user://modloader.cfg")
+
+	if err != OK:
+		save_config()
+	else:
+		enabled = config.get_value("PPR_Utilities", "enabled")
+
+func save_config():
+	var config = ConfigFile.new()
+
+	config.set_value("PPR_Utilities", "enabled", enabled)
+
+	config.save("user://modloader.cfg")

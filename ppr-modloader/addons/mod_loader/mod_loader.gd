@@ -223,8 +223,8 @@ func _check_autoload_positions() -> void:
 	if ml_options.allow_modloader_autoloads_anywhere:
 		_ModLoaderGodot.check_autoload_order("ModLoaderStore", "ModLoader", true)
 	else:
-		var _pos_ml_store := _ModLoaderGodot.check_autoload_position("ModLoaderStore", 0, true)
-		var _pos_ml_core := _ModLoaderGodot.check_autoload_position("ModLoader", 1, true)
+		var _pos_ml_store := _ModLoaderGodot.check_autoload_position("ModLoaderStore", 0, false)
+		var _pos_ml_core := _ModLoaderGodot.check_autoload_position("ModLoader", 1, false)
 
 
 # Loop over "res://mods" and add any mod zips to the unpacked virtual directory

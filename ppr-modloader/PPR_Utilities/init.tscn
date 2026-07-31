@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://PPR_Utilities/init.gd" type="Script" id=1]
 [ext_resource path="res://PPR_Utilities/MainMenu/MainMenu.gd" type="Script" id=2]
@@ -7,6 +7,8 @@
 [ext_resource path="res://PPR_Utilities/Weapons/WeaponClass.gd" type="Script" id=5]
 [ext_resource path="res://PPR_Utilities/Weapons/AmmoClass.gd" type="Script" id=6]
 [ext_resource path="res://PPR_Utilities/Locations/LocationClass.gd" type="Script" id=7]
+[ext_resource path="res://PPR_Utilities/Items.gd" type="Script" id=8]
+[ext_resource path="res://PPR_Utilities/ItemClass.gd" type="Script" id=9]
 
 [node name="PPRUtilities" type="Node"]
 script = ExtResource( 1 )
@@ -38,5 +40,16 @@ wait_time = 0.1
 one_shot = true
 autostart = true
 
+[node name="Items" type="Node" parent="."]
+script = ExtResource( 8 )
+
+[node name="ItemClass" type="Node" parent="Items"]
+script = ExtResource( 9 )
+
+[node name="CheckTimer" type="Timer" parent="Items"]
+wait_time = 0.1
+autostart = true
+
 [connection signal="timeout" from="Locations/CheckTimer" to="Locations" method="on_ready_locations_check"]
 [connection signal="timeout" from="Weapons/FixAmmoType" to="Weapons" method="fix_ammo"]
+[connection signal="timeout" from="Items/CheckTimer" to="Items" method="on_ready_items_check"]
